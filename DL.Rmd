@@ -1,0 +1,20 @@
+---
+title: "NFL stat creation"
+author: "Jacob"
+date: "2024-11-16"
+output: html_document
+---
+
+First want to convert the text files to csvs
+
+dont remove all rows from the csvs who arent in 2024, we should do this in python when we train, could train on other years
+
+make the super csv
+each player as a row with each seasons columns added on, if a player was not present, put none or NA in those sections
+
+- first get all the names from every season we look at
+- then setup the column names
+-iterate through each season add to that seasons columns
+
+
+then on train you just copy the csv, remove players who arent in that years season, remove columns that are in the future, and calculate the PPR variance, add the points in (this data may not be available for past years, maybe take the sample mean of the previous years)
