@@ -1,0 +1,45 @@
+---
+title: "NFL stat creation"
+author: "Jacob"
+date: "2024-11-16"
+output: html_document
+---
+
+
+On train you just copy the csv, remove players who arent in that years season, remove columns that are in the future, and calculate the PPR variance, add the points in (this data may not be available for past years, maybe take the sample mean of the previous years)
+
+``` {r test}
+# librar needed for full_join
+library(dplyr)
+
+# initial year
+df <- read.csv("./2014.txt")
+df <- df[c(1, ncol(df), 2:(ncol(df) - 1))]
+df$Player <- gsub("[*+]", "", df$Player)
+colnames(df)[-(1:3)] <- paste0(colnames(df)[-(1:3)], "_2014")
+head(df)
+
+# years we have data for
+years <-c("2015", "2016","2017","2018","2019","2020","2021","2022","2023")
+
+# loop through the years adding to the data frame
+for (y in years) {
+  filename <- paste0("./", y, ".txt")
+  df_new <- read.csv(filename)
+  
+  df_new <- df_new[c(1, ncol(df_new), 2:(ncol(df_new) - 1))]
+  df_new$Player <- gsub("[*+]", "", df_new$Player)
+  colnames(df_new)[-(1:3)] <- paste0(colnames(df_new)[-(1:3)], paste0("_",y))
+  
+  df_combined <- full_join(df, df_new, by = c("Player","ID", "FantPos"))
+  
+  df<-df_combined
+}
+print(head(df))
+
+# print a more recent player's stats
+print(df[df$Player == "Brock Purdy", ])
+
+# save to Working directory
+write.csv(df, "combined.csv", row.names = FALSE)
+```
